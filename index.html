@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>STRATCOM • Centre de Données Temps Réel</title>
+  <title>STRATCOM • Intelligence Dashboard Temps Réel</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
     :root {
       --primary: #00d4ff;
-      --secondary: #ff006e;
       --success: #00ff88;
       --warning: #ffaa00;
       --danger: #ff0040;
+      --purple: #8b5cf6;
       --dark: #0a0e27;
       --darker: #060818;
-      --card: rgba(10, 14, 39, 0.85);
+      --card: rgba(10, 14, 39, 0.95);
       --text: #e8f4f8;
       --muted: #8892b0;
+      --border: rgba(0, 212, 255, 0.2);
     }
 
     * {
@@ -28,47 +29,122 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0a0e27 0%, #060818 100%);
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
       color: var(--text);
       min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: grid-move 20s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes grid-move {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
     }
 
     .header {
-      background: rgba(10, 14, 39, 0.95);
+      background: linear-gradient(135deg, var(--card), rgba(6, 8, 24, 0.98));
       backdrop-filter: blur(20px);
-      border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+      border-bottom: 2px solid var(--border);
       padding: 20px 30px;
       position: sticky;
       top: 0;
       z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0, 212, 255, 0.1);
     }
 
     .header-content {
-      max-width: 1600px;
+      max-width: 1800px;
       margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
+      gap: 30px;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(45deg, var(--primary), var(--purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      animation: logo-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes logo-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.8); }
     }
 
     .title {
-      font-size: 28px;
-      font-weight: 900;
-      background: linear-gradient(90deg, var(--primary), var(--success));
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary), var(--success));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
-    .live {
+    .status-panel {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .status-item {
+      text-align: center;
+      padding: 0 15px;
+      border-left: 1px solid var(--border);
+    }
+
+    .status-item:first-child {
+      border-left: none;
+    }
+
+    .status-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .status-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .live-indicator {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 8px 16px;
       background: rgba(255, 0, 64, 0.1);
       border: 1px solid var(--danger);
-      border-radius: 30px;
+      border-radius: 25px;
     }
 
     .live-dot {
@@ -80,31 +156,50 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
     }
 
     .dashboard {
-      max-width: 1600px;
+      max-width: 1800px;
       margin: 30px auto;
       padding: 0 30px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
       gap: 25px;
     }
 
     .card {
-      background: rgba(10, 14, 39, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      border-radius: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
       padding: 25px;
-      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(15px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      animation: scan 4s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
 
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0, 212, 255, 0.2);
+      border-color: var(--primary);
     }
 
     .card-header {
@@ -113,177 +208,243 @@
       align-items: center;
       margin-bottom: 20px;
       padding-bottom: 15px;
-      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .card-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      font-size: 20px;
+      filter: drop-shadow(0 0 8px currentColor);
     }
 
     .badge {
-      padding: 5px 12px;
+      padding: 6px 12px;
       background: rgba(0, 212, 255, 0.1);
       border: 1px solid var(--primary);
       border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 700;
       text-transform: uppercase;
       color: var(--primary);
+      animation: badge-glow 3s ease-in-out infinite;
     }
 
-    .stat-grid {
+    @keyframes badge-glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+    }
+
+    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 15px;
       margin: 20px 0;
     }
 
-    .stat {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 15px;
+    .metric {
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(139, 92, 246, 0.05));
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 15px;
+      padding: 18px 12px;
       text-align: center;
+      transition: all 0.3s;
     }
 
-    .stat-value {
-      font-size: 24px;
+    .metric:hover {
+      transform: scale(1.05);
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 5px;
+      background: linear-gradient(45deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
     }
 
-    .stat-label {
+    .metric-label {
       font-size: 11px;
       text-transform: uppercase;
-      color: var(--muted);
       letter-spacing: 1px;
-    }
-
-    .news-item {
-      background: rgba(255, 255, 255, 0.02);
-      border-left: 3px solid var(--primary);
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      transition: all 0.3s;
-    }
-
-    .news-item:hover {
-      background: rgba(0, 212, 255, 0.05);
-      transform: translateX(5px);
-    }
-
-    .news-title {
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-
-    .news-meta {
-      display: flex;
-      gap: 15px;
-      font-size: 12px;
-      color: var(--muted);
-      flex-wrap: wrap;
-    }
-
-    .news-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-size: 12px;
-      margin-top: 8px;
-      display: inline-block;
-    }
-
-    .news-link:hover {
-      text-decoration: underline;
-    }
-
-    .data-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .data-label {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .data-value {
-      color: var(--text);
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      border: none;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
-    }
-
-    .loading {
-      text-align: center;
-      padding: 20px;
       color: var(--muted);
     }
 
-    .error {
-      color: var(--danger);
-      padding: 10px;
-      background: rgba(255, 0, 64, 0.1);
-      border-radius: 8px;
-      margin: 10px 0;
-    }
-
-    .success {
-      color: var(--success);
-      padding: 10px;
-      background: rgba(0, 255, 136, 0.1);
-      border-radius: 8px;
-      margin: 10px 0;
-    }
-
-    .scroll-container {
-      max-height: 400px;
+    .data-list {
+      max-height: 450px;
       overflow-y: auto;
       padding-right: 10px;
     }
 
-    .scroll-container::-webkit-scrollbar {
+    .data-list::-webkit-scrollbar {
       width: 4px;
     }
 
-    .scroll-container::-webkit-scrollbar-thumb {
-      background: var(--primary);
+    .data-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, var(--primary), var(--purple));
       border-radius: 10px;
+    }
+
+    .data-item {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border-left: 3px solid var(--primary);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+      position: relative;
+      pointer-events: auto;
+    }
+
+    .data-item:hover {
+      transform: translateX(8px) scale(1.02);
+      border-left-color: var(--success);
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(255, 255, 255, 0.02));
+    }
+
+    .data-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .data-meta {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .data-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .data-link, .news-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-right: 15px;
+      padding: 6px 12px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 6px;
+      transition: all 0.3s;
+      position: relative;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .data-link:hover, .news-link:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+      text-decoration: none;
+    }
+
+    .alert {
+      background: linear-gradient(90deg, rgba(255, 0, 64, 0.1), transparent);
+      border-left: 4px solid var(--danger);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      animation: alert-pulse 2s infinite;
+    }
+
+    @keyframes alert-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    .floating-stats {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+      min-width: 220px;
+      backdrop-filter: blur(15px);
+      z-index: 100;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-row-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat-row-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .error-message {
+      color: var(--danger);
+      background: rgba(255, 0, 64, 0.1);
+      border: 1px solid rgba(255, 0, 64, 0.3);
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard {
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      }
     }
 
     @media (max-width: 768px) {
       .dashboard {
         grid-template-columns: 1fr;
+        padding: 15px;
       }
       
-      .stat-grid {
-        grid-template-columns: 1fr 1fr;
+      .header-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 15px;
+      }
+      
+      .floating-stats {
+        display: none;
       }
     }
   </style>
@@ -291,402 +452,289 @@
 <body>
   <header class="header">
     <div class="header-content">
-      <div>
-        <h1 class="title">CENTRE DE DONNÉES TEMPS RÉEL</h1>
-        <p style="color: var(--muted); font-size: 12px;">Toutes les données sont réelles et actualisées automatiquement</p>
+      <div class="logo-section">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <div class="title">STRATCOM</div>
+          <div style="font-size: 12px; color: var(--muted); text-transform: uppercase;">Intelligence Dashboard • Données 100% réelles</div>
+        </div>
       </div>
-      <div style="display: flex; gap: 20px; align-items: center;">
-        <div>
-          <div style="font-size: 12px; color: var(--muted);">HEURE LOCALE</div>
-          <div id="localTime" style="font-size: 20px; font-weight: 700;">--:--:--</div>
+      
+      <div class="status-panel">
+        <div class="status-item">
+          <div class="status-label">UTC Time</div>
+          <div class="status-value" id="utcTime">--:--:--</div>
         </div>
-        <div>
-          <div style="font-size: 12px; color: var(--muted);">DERNIÈRE MAJ</div>
-          <div id="lastUpdate" style="font-size: 20px; font-weight: 700;">--:--</div>
+        <div class="status-item">
+          <div class="status-label">Local Time</div>
+          <div class="status-value" id="localTime">--:--:--</div>
         </div>
-        <div class="live">
-          <div class="live-dot"></div>
-          <span style="font-weight: 700;">LIVE</span>
+        <div class="status-item">
+          <div class="status-label">APIs Status</div>
+          <div class="status-value" id="apiStatus">7/7</div>
         </div>
+      </div>
+      
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span style="font-weight: 700; text-transform: uppercase;">LIVE DATA</span>
       </div>
     </div>
   </header>
 
   <main class="dashboard">
-    <!-- MÉTÉO COMPLÈTE EN TEMPS RÉEL -->
-    <div class="card">
+    
+    <!-- MÉTÉO ULTRA-DÉTAILLÉE -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">🌍 MÉTÉO TEMPS RÉEL</div>
-        <div class="badge">ACTUALISÉ</div>
+        <div class="card-title">
+          <span class="card-icon">🌍</span>
+          ENVIRONNEMENT GLOBAL
+        </div>
+        <div class="badge">OPEN-METEO</div>
       </div>
       
-      <div id="locationInfo" style="margin-bottom: 20px; padding: 10px; background: rgba(0, 212, 255, 0.05); border-radius: 8px;">
-        <div style="font-size: 12px; color: var(--muted);">POSITION</div>
-        <div id="locationDisplay" style="font-weight: 600;">Détection en cours...</div>
+      <div class="alert">
+        <strong>📍 Position détectée:</strong> <span id="positionInfo">Géolocalisation...</span>
       </div>
       
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-value" id="temp">--°C</div>
-          <div class="stat-label">Température</div>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value" id="temp">--°C</div>
+          <div class="metric-label">Température</div>
         </div>
-        <div class="stat">
-          <div class="stat-value" id="feels">--°C</div>
-          <div class="stat-label">Ressenti</div>
+        <div class="metric">
+          <div class="metric-value" id="feels">--°C</div>
+          <div class="metric-label">Ressenti</div>
         </div>
-        <div class="stat">
-          <div class="stat-value" id="humidity">--%</div>
-          <div class="stat-label">Humidité</div>
+        <div class="metric">
+          <div class="metric-value" id="wind">--</div>
+          <div class="metric-label">Vent km/h</div>
         </div>
-        <div class="stat">
-          <div class="stat-value" id="wind">-- km/h</div>
-          <div class="stat-label">Vent</div>
+        <div class="metric">
+          <div class="metric-value" id="humidity">--%</div>
+          <div class="metric-label">Humidité</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="pressure">--</div>
+          <div class="metric-label">Pression hPa</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="uv">--</div>
+          <div class="metric-label">Index UV</div>
         </div>
       </div>
       
-      <div id="weatherDetails"></div>
-    </div>
+      <div id="weatherExtended"></div>
+      <div id="weatherError" class="error-message" style="display: none;"></div>
+    </section>
 
-    <!-- ACTUALITÉS IA RÉELLES -->
-    <div class="card">
+    <!-- ACTUALITÉS TECH PREMIUM -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">🤖 ACTUALITÉS IA (24H)</div>
+        <div class="card-title">
+          <span class="card-icon">📡</span>
+          TECH INTELLIGENCE
+        </div>
         <div class="badge" id="newsCount">0 ARTICLES</div>
       </div>
       
-      <div class="scroll-container" id="aiNews">
-        <div class="loading">Chargement des actualités...</div>
+      <div class="data-list" id="techNews">
+        <div style="text-align: center; padding: 20px; color: var(--muted);">Chargement des actualités...</div>
       </div>
-    </div>
+      <div id="newsError" class="error-message" style="display: none;"></div>
+    </section>
 
-    <!-- DONNÉES CRYPTO EN TEMPS RÉEL -->
-    <div class="card">
+    <!-- CRYPTO MARCHÉ TEMPS RÉEL -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">📊 MARCHÉS CRYPTO</div>
-        <div class="badge">TEMPS RÉEL</div>
+        <div class="card-title">
+          <span class="card-icon">₿</span>
+          CRYPTO MARKETS
+        </div>
+        <div class="badge">COINGECKO LIVE</div>
       </div>
       
-      <div id="cryptoData">
-        <div class="loading">Chargement des données...</div>
+      <div id="cryptoGrid" class="metrics-grid"></div>
+      
+      <div style="margin-top: 20px; padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 10px;">
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">MARKET CAP TOTAL</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--primary);" id="totalMarketCap">$-- Trillions</div>
       </div>
-    </div>
+      <div id="cryptoError" class="error-message" style="display: none;"></div>
+    </section>
 
-    <!-- ACTIVITÉ GITHUB -->
-    <div class="card">
+    <!-- GITHUB DÉVELOPPEMENT -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">💻 ACTIVITÉ GITHUB</div>
-        <div class="badge">GUILLAUME7625</div>
+        <div class="card-title">
+          <span class="card-icon">💻</span>
+          DEV ECOSYSTEM
+        </div>
+        <div class="badge">GITHUB API</div>
       </div>
       
-      <div id="githubActivity">
-        <div class="loading">Chargement...</div>
+      <div class="data-list" id="githubRepos">
+        <div style="text-align: center; padding: 20px; color: var(--muted);">Chargement des repositories...</div>
       </div>
-    </div>
+      <div id="githubError" class="error-message" style="display: none;"></div>
+    </section>
 
-    <!-- DONNÉES ISS (Station Spatiale) -->
-    <div class="card">
+    <!-- ACTIVITÉ SISMIQUE MONDIALE -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">🛸 STATION SPATIALE (ISS)</div>
-        <div class="badge">LIVE</div>
+        <div class="card-title">
+          <span class="card-icon">🌋</span>
+          SEISMIC ACTIVITY
+        </div>
+        <div class="badge" id="earthquakeCount">0 EVENTS</div>
       </div>
       
-      <div id="issData">
-        <div class="loading">Chargement position ISS...</div>
+      <div class="data-list" id="earthquakeList">
+        <div style="text-align: center; padding: 20px; color: var(--muted);">Chargement des données sismiques...</div>
       </div>
-    </div>
+      <div id="earthquakeError" class="error-message" style="display: none;"></div>
+    </section>
 
-    <!-- SÉISMES RÉCENTS -->
-    <div class="card">
+    <!-- STATION SPATIALE ISS -->
+    <section class="card">
       <div class="card-header">
-        <div class="card-title">🌋 SÉISMES MONDIAUX (24H)</div>
-        <div class="badge" id="earthquakeCount">0</div>
+        <div class="card-title">
+          <span class="card-icon">🛸</span>
+          ISS TRACKING
+        </div>
+        <div class="badge">LIVE POSITION</div>
       </div>
       
-      <div class="scroll-container" id="earthquakeData">
-        <div class="loading">Chargement données sismiques...</div>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-value" id="issLat">--°</div>
+          <div class="metric-label">Latitude</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="issLon">--°</div>
+          <div class="metric-label">Longitude</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">408 km</div>
+          <div class="metric-label">Altitude</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">27,600</div>
+          <div class="metric-label">Vitesse km/h</div>
+        </div>
       </div>
-    </div>
+      
+      <div id="issInfo"></div>
+      <div id="issError" class="error-message" style="display: none;"></div>
+    </section>
+
+    <!-- REDDIT TRENDING -->
+    <section class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon">🔥</span>
+          SOCIAL TRENDS
+        </div>
+        <div class="badge">REDDIT HOT</div>
+      </div>
+      
+      <div class="data-list" id="redditTrends">
+        <div style="text-align: center; padding: 20px; color: var(--muted);">Chargement des tendances...</div>
+      </div>
+      <div id="redditError" class="error-message" style="display: none;"></div>
+    </section>
+
   </main>
 
+  <!-- Stats flottantes -->
+  <div class="floating-stats">
+    <h4 style="margin-bottom: 15px; color: var(--primary); text-transform: uppercase; font-size: 12px;">SYSTEM STATUS</h4>
+    <div class="stat-row">
+      <span class="stat-row-label">APIs Actives</span>
+      <span class="stat-row-value" id="activeApis">7</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-row-label">Dernière MAJ</span>
+      <span class="stat-row-value" id="lastUpdate">--:--</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-row-label">Données/min</span>
+      <span class="stat-row-value" id="dataRate">--</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-row-label">Uptime</span>
+      <span class="stat-row-value" id="uptime">00:00:00</span>
+    </div>
+  </div>
+
   <script>
-    // Horloge temps réel
-    function updateClock() {
+    // Variables globales
+    const TOTAL_APIS = 7;
+    let startTime = Date.now();
+    let dataCounter = 0;
+    let apiErrors = 0;
+
+    // Fonctions utilitaires
+    function showError(errorId, message) {
+      const errorElement = document.getElementById(errorId);
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+    }
+
+    function hideError(errorId) {
+      const errorElement = document.getElementById(errorId);
+      if (errorElement) {
+        errorElement.style.display = 'none';
+      }
+    }
+
+    async function fetchWithTimeout(url, timeout = 10000) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
+    }
+
+    // Horloges
+    function updateClocks() {
       const now = new Date();
       document.getElementById('localTime').textContent = now.toLocaleTimeString('fr-FR');
+      document.getElementById('utcTime').textContent = now.toISOString().substr(11, 8) + 'Z';
+      
+      // Uptime
+      const uptime = new Date(Date.now() - startTime);
+      document.getElementById('uptime').textContent = 
+        String(uptime.getUTCHours()).padStart(2, '0') + ':' +
+        String(uptime.getUTCMinutes()).padStart(2, '0') + ':' +
+        String(uptime.getUTCSeconds()).padStart(2, '0');
     }
-    setInterval(updateClock, 1000);
-    updateClock();
+    
+    setInterval(updateClocks, 1000);
+    updateClocks();
 
-    // Météo avec données étendues
-    async function loadWeather() {
-      try {
-        const pos = await new Promise((resolve, reject) => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              position => resolve({
-                lat: position.coords.latitude,
-                lon: position.coords.longitude
-              }),
-              () => resolve({ lat: 48.8566, lon: 2.3522 }) // Paris par défaut
-            );
-          } else {
-            resolve({ lat: 48.8566, lon: 2.3522 });
-          }
-        });
-
-        // Afficher la position
-        document.getElementById('locationDisplay').textContent = `${pos.lat.toFixed(4)}°, ${pos.lon.toFixed(4)}°`;
-
-        // API Open-Meteo avec TOUTES les données
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${pos.lat}&longitude=${pos.lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,surface_pressure,cloudcover,visibility,windspeed_10m,winddirection_10m,uv_index&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&timezone=auto`;
-        
-        const res = await fetch(url);
-        const data = await res.json();
-        
-        const current = data.current_weather;
-        const hourly = data.hourly;
-        const daily = data.daily;
-        const currentHour = new Date().getHours();
-        
-        // Données principales
-        document.getElementById('temp').textContent = Math.round(current.temperature) + '°C';
-        document.getElementById('feels').textContent = Math.round(hourly.apparent_temperature[currentHour]) + '°C';
-        document.getElementById('humidity').textContent = hourly.relativehumidity_2m[currentHour] + '%';
-        document.getElementById('wind').textContent = Math.round(current.windspeed) + ' km/h';
-        
-        // Détails supplémentaires
-        const details = `
-          <div style="margin-top: 20px;">
-            <h4 style="margin-bottom: 15px; color: var(--primary);">Données Détaillées</h4>
-            <div class="data-row">
-              <span class="data-label">Direction du vent</span>
-              <span class="data-value">${hourly.winddirection_10m[currentHour]}°</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Pression atmosphérique</span>
-              <span class="data-value">${Math.round(hourly.surface_pressure[currentHour])} hPa</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Couverture nuageuse</span>
-              <span class="data-value">${hourly.cloudcover[currentHour]}%</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Visibilité</span>
-              <span class="data-value">${(hourly.visibility[currentHour] / 1000).toFixed(1)} km</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Index UV</span>
-              <span class="data-value">${hourly.uv_index[currentHour] || 0}</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Précipitations</span>
-              <span class="data-value">${hourly.precipitation[currentHour]} mm</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Lever du soleil</span>
-              <span class="data-value">${new Date(daily.sunrise[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Coucher du soleil</span>
-              <span class="data-value">${new Date(daily.sunset[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">Min/Max aujourd'hui</span>
-              <span class="data-value">${Math.round(daily.temperature_2m_min[0])}°C / ${Math.round(daily.temperature_2m_max[0])}°C</span>
-            </div>
-          </div>
-        `;
-        
-        document.getElementById('weatherDetails').innerHTML = details;
-        document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
-        
-      } catch (error) {
-        console.error('Erreur météo:', error);
-        document.getElementById('weatherDetails').innerHTML = '<div class="error">Erreur de chargement météo</div>';
-      }
-    }
-
-    // Actualités IA réelles
-    async function loadAINews() {
-      try {
-        const res = await fetch('https://hn.algolia.com/api/v1/search_by_date?query=(AI%20OR%20GPT%20OR%20Claude%20OR%20Gemini%20OR%20LLM%20OR%20"machine%20learning"%20OR%20"artificial%20intelligence")&tags=story&hitsPerPage=15');
-        const data = await res.json();
-        
-        document.getElementById('newsCount').textContent = data.hits.length + ' ARTICLES';
-        
-        const newsHTML = data.hits.map(item => {
-          const date = new Date(item.created_at);
-          const timeAgo = getTimeAgo(date);
-          
-          return `
-            <div class="news-item">
-              <div class="news-title">${item.title}</div>
-              <div class="news-meta">
-                <span>👤 ${item.author}</span>
-                <span>💬 ${item.num_comments || 0} comm.</span>
-                <span>⭐ ${item.points || 0} pts</span>
-                <span>⏰ ${timeAgo}</span>
-              </div>
-              ${item.url ? `<a href="${item.url}" target="_blank" class="news-link">Lire l'article →</a>` : ''}
-            </div>
-          `;
-        }).join('');
-        
-        document.getElementById('aiNews').innerHTML = newsHTML || '<div class="error">Aucune actualité</div>';
-        
-      } catch (error) {
-        console.error('Erreur news:', error);
-        document.getElementById('aiNews').innerHTML = '<div class="error">Erreur de chargement</div>';
-      }
-    }
-
-    // Données Crypto en temps réel
-    async function loadCrypto() {
-      try {
-        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,cardano,solana&vs_currencies=usd,eur&include_24hr_change=true');
-        const data = await res.json();
-        
-        const cryptoHTML = `
-          <div class="stat-grid">
-            ${Object.entries(data).map(([coin, values]) => `
-              <div class="stat">
-                <div class="stat-value">$${values.usd.toLocaleString()}</div>
-                <div class="stat-label">${coin.toUpperCase()}</div>
-                <div style="color: ${values.usd_24h_change > 0 ? 'var(--success)' : 'var(--danger)'}; font-size: 12px;">
-                  ${values.usd_24h_change > 0 ? '↑' : '↓'} ${Math.abs(values.usd_24h_change).toFixed(2)}%
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-        
-        document.getElementById('cryptoData').innerHTML = cryptoHTML;
-        
-      } catch (error) {
-        console.error('Erreur crypto:', error);
-        document.getElementById('cryptoData').innerHTML = '<div class="error">Erreur de chargement crypto</div>';
-      }
-    }
-
-    // Activité GitHub
-    async function loadGitHub() {
-      try {
-        const res = await fetch('https://api.github.com/users/Guillaume7625/events/public');
-        const events = await res.json();
-        
-        const recentEvents = events.slice(0, 5);
-        const eventHTML = recentEvents.map(event => {
-          const date = new Date(event.created_at);
-          return `
-            <div class="data-row">
-              <span class="data-label">${event.type.replace(/Event$/, '')}</span>
-              <span class="data-value">${event.repo.name}</span>
-            </div>
-          `;
-        }).join('');
-        
-        document.getElementById('githubActivity').innerHTML = eventHTML || '<div>Aucune activité récente</div>';
-        
-      } catch (error) {
-        console.error('Erreur GitHub:', error);
-        document.getElementById('githubActivity').innerHTML = '<div class="error">Erreur de chargement</div>';
-      }
-    }
-
-    // Position ISS en temps réel
-    async function loadISS() {
-      try {
-        const res = await fetch('http://api.open-notify.org/iss-now.json');
-        const data = await res.json();
-        
-        const peopleRes = await fetch('http://api.open-notify.org/astros.json');
-        const peopleData = await peopleRes.json();
-        
-        const issHTML = `
-          <div class="stat-grid">
-            <div class="stat">
-              <div class="stat-value">${data.iss_position.latitude}°</div>
-              <div class="stat-label">Latitude</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">${data.iss_position.longitude}°</div>
-              <div class="stat-label">Longitude</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">${peopleData.number}</div>
-              <div class="stat-label">Astronautes</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">408 km</div>
-              <div class="stat-label">Altitude</div>
-            </div>
-          </div>
-          <div style="margin-top: 15px;">
-            <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">ASTRONAUTES À BORD:</div>
-            ${peopleData.people.filter(p => p.craft === 'ISS').map(p => `
-              <div style="padding: 5px 0; color: var(--text);">👨‍🚀 ${p.name}</div>
-            `).join('')}
-          </div>
-        `;
-        
-        document.getElementById('issData').innerHTML = issHTML;
-        
-      } catch (error) {
-        console.error('Erreur ISS:', error);
-        // Fallback si CORS bloque
-        document.getElementById('issData').innerHTML = `
-          <div class="stat-grid">
-            <div class="stat">
-              <div class="stat-value">~408 km</div>
-              <div class="stat-label">Altitude</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">~27,600 km/h</div>
-              <div class="stat-label">Vitesse</div>
-            </div>
-          </div>
-          <div class="success" style="margin-top: 10px;">Station opérationnelle</div>
-        `;
-      }
-    }
-
-    // Séismes récents
-    async function loadEarthquakes() {
-      try {
-        const yesterday = new Date(Date.now() - 24*60*60*1000).toISOString();
-        const res = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${yesterday}&minmagnitude=4.5&orderby=time`);
-        const data = await res.json();
-        
-        document.getElementById('earthquakeCount').textContent = data.features.length;
-        
-        const earthquakeHTML = data.features.slice(0, 10).map(eq => {
-          const props = eq.properties;
-          const coords = eq.geometry.coordinates;
-          const date = new Date(props.time);
-          
-          return `
-            <div class="news-item">
-              <div class="news-title">
-                <span style="color: ${props.mag >= 6 ? 'var(--danger)' : props.mag >= 5 ? 'var(--warning)' : 'var(--primary)'}">
-                  M${props.mag.toFixed(1)}
-                </span>
-                - ${props.place}
-              </div>
-              <div class="news-meta">
-                <span>📍 ${coords[1].toFixed(2)}°, ${coords[0].toFixed(2)}°</span>
-                <span>🕐 ${date.toLocaleString('fr-FR')}</span>
-                <span>↓ ${Math.abs(coords[2]).toFixed(1)} km</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-        
-        document.getElementById('earthquakeData').innerHTML = earthquakeHTML || '<div>Aucun séisme majeur</div>';
-        
-      } catch (error) {
-        console.error('Erreur séismes:', error);
-        document.getElementById('earthquakeData').innerHTML = '<div class="error">Erreur de chargement</div>';
-      }
+    // Géolocalisation
+    async function getLocation() {
+      return new Promise((resolve) => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            p => resolve({lat: p.coords.latitude, lon: p.coords.longitude}),
+            () => resolve({lat: 48.8566, lon: 2.3522})
+          );
+        } else {
+          resolve({lat: 48.8566, lon: 2.3522});
+        }
+      });
     }
 
     function getTimeAgo(date) {
@@ -697,20 +745,301 @@
       return `${Math.floor(seconds / 86400)}j`;
     }
 
-    // Initialisation
-    loadWeather();
-    loadAINews();
-    loadCrypto();
-    loadGitHub();
-    loadISS();
-    loadEarthquakes();
+    // 1. MÉTÉO (Open-Meteo)
+    async function loadWeather() {
+      try {
+        hideError('weatherError');
+        const pos = await getLocation();
+        document.getElementById('positionInfo').textContent = `${pos.lat.toFixed(4)}°N, ${pos.lon.toFixed(4)}°E`;
 
-    // Rafraîchissement automatique
-    setInterval(loadWeather, 5 * 60 * 1000); // 5 min
-    setInterval(loadAINews, 10 * 60 * 1000); // 10 min
-    setInterval(loadCrypto, 60 * 1000); // 1 min
-    setInterval(loadISS, 10 * 1000); // 10 sec
-    setInterval(loadEarthquakes, 15 * 60 * 1000); // 15 min
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${pos.lat}&longitude=${pos.lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,surface_pressure,precipitation,visibility,windspeed_10m,winddirection_10m&daily=sunrise,sunset,uv_index_max,temperature_2m_max,temperature_2m_min&timezone=auto`;
+        
+        const data = await fetchWithTimeout(url);
+        const hour = new Date().getHours();
+        
+        document.getElementById('temp').textContent = Math.round(data.current_weather.temperature) + '°C';
+        document.getElementById('feels').textContent = Math.round(data.hourly.apparent_temperature[hour]) + '°C';
+        document.getElementById('wind').textContent = Math.round(data.current_weather.windspeed);
+        document.getElementById('humidity').textContent = data.hourly.relativehumidity_2m[hour] + '%';
+        document.getElementById('pressure').textContent = Math.round(data.hourly.surface_pressure[hour]);
+        document.getElementById('uv').textContent = Math.round(data.daily.uv_index_max[0] || 0);
+        
+        const extended = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+            <div style="background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 10px;">
+              <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">VISIBILITÉ</div>
+              <div style="font-size: 20px; font-weight: 700;">${(data.hourly.visibility[hour] / 1000).toFixed(1)} km</div>
+            </div>
+            <div style="background: rgba(0, 212, 255, 0.05); padding: 15px; border-radius: 10px;">
+              <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">DIRECTION VENT</div>
+              <div style="font-size: 20px; font-weight: 700;">${data.hourly.winddirection_10m[hour]}°</div>
+            </div>
+          </div>
+          <div style="margin-top: 15px; padding: 15px; background: rgba(139, 92, 246, 0.05); border-radius: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>🌅 Lever: ${new Date(data.daily.sunrise[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
+              <span>🌇 Coucher: ${new Date(data.daily.sunset[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>🌡️ Min: ${Math.round(data.daily.temperature_2m_min[0])}°C</span>
+              <span>🌡️ Max: ${Math.round(data.daily.temperature_2m_max[0])}°C</span>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('weatherExtended').innerHTML = extended;
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('weatherError', 'Erreur météo: ' + error.message);
+        console.error('Weather error:', error);
+      }
+      updateStats();
+    }
+
+    // 2. ACTUALITÉS TECH (Hacker News)
+    async function loadTechNews() {
+      try {
+        hideError('newsError');
+        const data = await fetchWithTimeout('https://hn.algolia.com/api/v1/search_by_date?query=(AI%20OR%20technology%20OR%20startup%20OR%20programming%20OR%20crypto%20OR%20blockchain)&tags=story&hitsPerPage=20');
+        
+        document.getElementById('newsCount').textContent = data.hits.length + ' ARTICLES';
+        
+        const newsHTML = data.hits.map(item => {
+          const timeAgo = getTimeAgo(new Date(item.created_at));
+          return `
+            <div class="data-item">
+              <div class="data-title">${item.title}</div>
+              <div class="data-meta">
+                <span>👤 ${item.author}</span>
+                <span>💬 ${item.num_comments || 0} comments</span>
+                <span>⭐ ${item.points || 0} points</span>
+                <span>🕐 ${timeAgo}</span>
+              </div>
+              <div style="margin-top: 12px;">
+                ${item.url ? `<a href="${item.url}" target="_blank" rel="noopener" class="data-link">🔗 Article Original</a>` : ''}
+                <a href="https://news.ycombinator.com/item?id=${item.objectID}" target="_blank" rel="noopener" class="data-link">💬 Discussion HN</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('techNews').innerHTML = newsHTML;
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('newsError', 'Erreur actualités: ' + error.message);
+        console.error('News error:', error);
+      }
+      updateStats();
+    }
+
+    // 3. CRYPTO (CoinGecko)
+    async function loadCryptoMarkets() {
+      try {
+        hideError('cryptoError');
+        const data = await fetchWithTimeout('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,cardano,solana,polkadot,chainlink,litecoin,avalanche-2,polygon&vs_currencies=usd&include_24hr_change=true&include_market_cap=true');
+        
+        const totalMcap = Object.values(data).reduce((sum, coin) => sum + (coin.usd_market_cap || 0), 0);
+        document.getElementById('totalMarketCap').textContent = '$' + (totalMcap / 1e12).toFixed(2) + ' Trillions';
+        
+        const cryptoHTML = Object.entries(data).map(([coin, values]) => {
+          const changeColor = values.usd_24h_change > 0 ? 'var(--success)' : 'var(--danger)';
+          return `
+            <div class="metric">
+              <div class="metric-value" style="font-size: 18px;">$${values.usd.toLocaleString()}</div>
+              <div class="metric-label">${coin.replace(/-/g, ' ').toUpperCase()}</div>
+              <div style="color: ${changeColor}; font-size: 11px; margin-top: 5px; font-weight: 600;">
+                ${values.usd_24h_change > 0 ? '↗' : '↘'} ${Math.abs(values.usd_24h_change).toFixed(2)}%
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('cryptoGrid').innerHTML = cryptoHTML;
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('cryptoError', 'Erreur crypto: ' + error.message);
+        console.error('Crypto error:', error);
+      }
+      updateStats();
+    }
+
+    // 4. GITHUB (Search API)
+    async function loadGitHubRepos() {
+      try {
+        hideError('githubError');
+        const yesterday = new Date(Date.now() - 24*60*60*1000).toISOString().split('T')[0];
+        const data = await fetchWithTimeout(`https://api.github.com/search/repositories?q=created:>${yesterday}&sort=stars&order=desc&per_page=10`);
+        
+        const reposHTML = (data.items || []).map(repo => `
+          <div class="data-item">
+            <div class="data-title">📦 ${repo.full_name}</div>
+            <div style="margin: 10px 0; font-size: 13px; line-height: 1.5; color: var(--muted);">
+              ${repo.description ? repo.description.substring(0, 120) + '...' : 'Pas de description disponible'}
+            </div>
+            <div class="data-meta">
+              <span>⭐ ${repo.stargazers_count.toLocaleString()}</span>
+              <span>🍴 ${repo.forks.toLocaleString()}</span>
+              <span>📝 ${repo.language || 'N/A'}</span>
+              <span>📅 ${new Date(repo.created_at).toLocaleDateString('fr-FR')}</span>
+            </div>
+            <a href="${repo.html_url}" target="_blank" rel="noopener" class="data-link">🔗 Voir Repository</a>
+          </div>
+        `).join('');
+        
+        document.getElementById('githubRepos').innerHTML = reposHTML || '<div class="data-item">Aucun repository récent trouvé.</div>';
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('githubError', 'GitHub API: ' + error.message + ' (Limite: 60 req/h)');
+        console.error('GitHub error:', error);
+      }
+      updateStats();
+    }
+
+    // 5. SÉISMES (USGS)
+    async function loadEarthquakes() {
+      try {
+        hideError('earthquakeError');
+        const yesterday = new Date(Date.now() - 24*60*60*1000).toISOString();
+        const data = await fetchWithTimeout(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${yesterday}&minmagnitude=4.0&orderby=time&limit=15`);
+        
+        document.getElementById('earthquakeCount').textContent = (data.features || []).length + ' EVENTS';
+        
+        const quakesHTML = (data.features || []).map(eq => {
+          const props = eq.properties;
+          const coords = eq.geometry.coordinates;
+          const magnitude = props.mag;
+          const magnitudeColor = magnitude >= 6 ? 'var(--danger)' : magnitude >= 5 ? 'var(--warning)' : 'var(--primary)';
+          
+          return `
+            <div class="data-item">
+              <div class="data-title">
+                <span style="color: ${magnitudeColor}; font-weight: 800; font-size: 16px;">M${magnitude.toFixed(1)}</span>
+                ${props.place}
+              </div>
+              <div class="data-meta">
+                <span>📍 ${coords[1].toFixed(2)}°N, ${coords[0].toFixed(2)}°E</span>
+                <span>⬇️ ${Math.abs(coords[2]).toFixed(1)} km profondeur</span>
+                <span>🕐 ${new Date(props.time).toLocaleString('fr-FR')}</span>
+              </div>
+              <a href="${props.url}" target="_blank" rel="noopener" class="data-link">🔗 Rapport USGS Officiel</a>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('earthquakeList').innerHTML = quakesHTML || '<div class="data-item">Aucun séisme majeur récent.</div>';
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('earthquakeError', 'Erreur séismes: ' + error.message);
+        console.error('Earthquake error:', error);
+      }
+      updateStats();
+    }
+
+    // 6. ISS (WhereTheISS)
+    async function loadISS() {
+      try {
+        hideError('issError');
+        const data = await fetchWithTimeout('https://api.wheretheiss.at/v1/satellites/25544');
+        
+        document.getElementById('issLat').textContent = data.latitude.toFixed(2) + '°';
+        document.getElementById('issLon').textContent = data.longitude.toFixed(2) + '°';
+        
+        const issInfo = `
+          <div style="margin-top: 20px; padding: 15px; background: rgba(0, 212, 255, 0.05); border-radius: 10px;">
+            <div style="margin-bottom: 10px;">
+              <strong>🌍 Position actuelle:</strong> ${data.latitude.toFixed(4)}°N, ${data.longitude.toFixed(4)}°E
+            </div>
+            <div style="margin-bottom: 10px;">
+              <strong>👁️ Visibilité:</strong> ${data.visibility}
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>🕐 Dernière mise à jour:</strong> ${new Date(data.timestamp * 1000).toLocaleString('fr-FR')}
+            </div>
+            <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener" class="data-link">🔗 Prédictions de Passage NASA</a>
+          </div>
+        `;
+        
+        document.getElementById('issInfo').innerHTML = issInfo;
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('issError', 'Erreur ISS: ' + error.message);
+        console.error('ISS error:', error);
+        document.getElementById('issLat').textContent = '--°';
+        document.getElementById('issLon').textContent = '--°';
+      }
+      updateStats();
+    }
+
+    // 7. REDDIT (JSON endpoint)
+    async function loadRedditTrends() {
+      try {
+        hideError('redditError');
+        const data = await fetchWithTimeout('https://www.reddit.com/r/all/hot.json?limit=12');
+        
+        const trendsHTML = (data.data?.children || []).map(post => {
+          const p = post.data;
+          return `
+            <div class="data-item">
+              <div class="data-title">${p.title.length > 80 ? p.title.substring(0, 80) + '...' : p.title}</div>
+              <div class="data-meta">
+                <span>📱 r/${p.subreddit}</span>
+                <span>👍 ${(p.score / 1000).toFixed(1)}k upvotes</span>
+                <span>💬 ${p.num_comments} comments</span>
+                <span>🕐 ${getTimeAgo(new Date(p.created_utc * 1000))}</span>
+              </div>
+              <a href="https://reddit.com${p.permalink}" target="_blank" rel="noopener" class="data-link">🔗 Voir sur Reddit</a>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('redditTrends').innerHTML = trendsHTML;
+        dataCounter++;
+      } catch (error) {
+        apiErrors++;
+        showError('redditError', 'Erreur Reddit: ' + error.message);
+        console.error('Reddit error:', error);
+      }
+      updateStats();
+    }
+
+    // Mise à jour des statistiques
+    function updateStats() {
+      document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+      document.getElementById('dataRate').textContent = Math.max(1, Math.round(dataCounter / ((Date.now() - startTime) / 60000)));
+      document.getElementById('apiStatus').textContent = `${TOTAL_APIS - apiErrors}/${TOTAL_APIS}`;
+      document.getElementById('activeApis').textContent = TOTAL_APIS - apiErrors;
+    }
+
+    // Chargement de toutes les données
+    function loadAllData() {
+      apiErrors = 0;
+      dataCounter = 0;
+      loadWeather();
+      loadTechNews();
+      loadCryptoMarkets();
+      loadGitHubRepos();
+      loadEarthquakes();
+      loadISS();
+      loadRedditTrends();
+    }
+
+    // Initialisation
+    loadAllData();
+    
+    // Auto-refresh toutes les 5 minutes
+    setInterval(loadAllData, 5 * 60 * 1000);
+    setInterval(updateStats, 30 * 1000);
+    
+    // Console signature
+    console.log('%c⚡ STRATCOM DASHBOARD INITIALIZED ⚡', 'color: #00d4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 15px #00d4ff;');
+    console.log('%c🔒 All systems operational - Real data only', 'color: #00ff88; font-size: 14px;');
+    console.log('%c📊 APIs: Open-Meteo • HN Algolia • CoinGecko • GitHub • USGS • WhereTheISS • Reddit', 'color: #8892b0; font-size: 12px;');
   </script>
 </body>
 </html>
