@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centre de Commandement • Veille Stratégique</title>
+  <style>
+    :root{--bg:#0a0e1a;--card:rgba(20,25,37,0.9);--text:#e4e8f1;--accent:#3b82f6;--green:#10b981;--red:#ef4444}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#0a0e1a,#1a0033);color:var(--text);min-height:100vh;padding:20px}
+    .header{background:rgba(15,20,32,0.8);backdrop-filter:blur(10px);border-radius:12px;padding:20px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .title{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .subtitle{color:#94a3b8;font-size:0.9rem}
+    .live{background:var(--red);color:white;padding:4px 8px;border-radius:4px;font-size:0.7rem;font-weight:700;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+    .time{font-family:monospace;font-size:1.2rem;color:var(--green)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;max-width:1400px;margin:0 auto}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;backdrop-filter:blur(10px);transition:transform 0.3s,box-shadow 0.3s}
+    .card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+    .card h2{margin-bottom:15px;display:flex;align-items:center;gap:10px;font-size:1.2rem}
+    .temp{font-size:3rem;font-weight:bold;margin:10px 0}
+    .badge{background:var(--accent);color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;display:inline-block;margin:5px 5px 5px 0}
+    .btn{background:var(--accent);color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-top:15px;transition:background 0.3s}
+    .btn:hover{background:#2563eb}
+    .news-item{background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin:10px 0}
+    .news-item strong{display:block;margin-bottom:5px}
+    .news-item small{color:#94a3b8}
+    .weather-details{display:flex;gap:15px;margin:15px 0}
+    .weather-details span{display:flex;align-items:center;gap:5px}
+    #analysis{background:rgba(255,255,255,0.02);padding:20px;border-radius:8px;margin-top:15px;display:none}
+    #analysis.show{display:block}
+    #analysis h3{color:var(--accent);margin-bottom:10px}
+    #analysis ul{margin:10px 0 10px 20px}
+    .footer{text-align:center;margin-top:40px;padding:20px;color:#64748b;font-size:0.9rem}
+    @media(max-width:768px){.grid{grid-template-columns:1fr}.header{text-align:center}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <span class="live">● LIVE</span>
+      <h1 class="title">Centre de Commandement</h1>
+      <p class="subtitle">Veille Stratégique Temps Réel</p>
+    </div>
+    <div class="time" id="clock">--:--:--</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>🌤️ Météo Locale</h2>
+      <div id="weather">
+        <div class="temp" id="temp">--°C</div>
+        <div id="desc">Chargement...</div>
+        <div class="weather-details">
+          <span>💧 <span id="humidity">--%</span></span>
+          <span>💨 <span id="wind">-- km/h</span></span>
+          <span>🌅 <span id="sunset">--:--</span></span>
+        </div>
+        <div id="location" style="margin-top:10px;opacity:0.7"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🤖 Intelligence IA - 24h</h2>
+      <div id="ai-news">
+        <div style="text-align:center;padding:20px">Chargement des actualités...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚓ Marine Nationale</h2>
+      <div>
+        <span class="badge">42 Bâtiments en mer</span>
+        <span class="badge">3 Zones actives</span>
+        <span class="badge">Indo-Pacifique</span>
+        <button class="btn" onclick="showAnalysis()">📊 Générer Analyse Stratégique</button>
+        <div id="analysis">
+          <h3>Analyse Stratégique</h3>
+          <p><strong>Points clés :</strong></p>
+          <ul>
+            <li>Présence renforcée en Indo-Pacifique avec le GAN</li>
+            <li>Programme Suffren : 3/6 SNA livrés</li>
+            <li>Coopération OTAN en Méditerranée orientale</li>
+            <li>Surveillance accrue des câbles sous-marins</li>
+          </ul>
+          <p><strong>Recommandations :</strong></p>
+          <ul>
+            <li>Maintenir la permanence à la mer</li>
+            <li>Accélérer la modernisation de la flotte</li>
+            <li>Renforcer les partenariats européens</li>
+          </ul>
+          <p style="margin-top:10px;font-size:0.9rem;opacity:0.8">
+            Généré le <span id="analysisDate"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Données : Open-Meteo, HN Algolia • GitHub : Guillaume7625</p>
+  </footer>
+
+  <script>
+    // Horloge
+    function updateClock() {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Météo
+    async function loadWeather() {
+      try {
+        // Essayer la géolocalisation
+        const getCoords = () => new Promise((resolve) => {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude, name: 'Position actuelle'}),
+              () => resolve({lat: 48.8566, lon: 2.3522, name: 'Paris'})
+            );
+          } else {
+            resolve({lat: 48.8566, lon: 2.3522, name: 'Paris'});
+          }
+        });
+
+        const coords = await getCoords();
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&hourly=relativehumidity_2m&daily=sunset&timezone=auto`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        // Afficher les données
+        document.getElementById('temp').textContent = Math.round(data.current_weather.temperature) + '°C';
+        document.getElementById('desc').textContent = getWeatherDesc(data.current_weather.weathercode);
+        document.getElementById('humidity').textContent = data.hourly.relativehumidity_2m[new Date().getHours()] + '%';
+        document.getElementById('wind').textContent = Math.round(data.current_weather.windspeed) + ' km/h';
+        
+        const sunset = new Date(data.daily.sunset[0]);
+        document.getElementById('sunset').textContent = sunset.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        
+        document.getElementById('location').innerHTML = `📍 ${coords.name} (${coords.lat.toFixed(2)}, ${coords.lon.toFixed(2)})`;
+      } catch(e) {
+        document.getElementById('desc').textContent = 'Erreur de chargement';
+      }
+    }
+
+    function getWeatherDesc(code) {
+      const descs = {
+        0: '☀️ Ciel dégagé',
+        1: '🌤️ Principalement dégagé',
+        2: '⛅ Partiellement nuageux',
+        3: '☁️ Couvert',
+        45: '🌫️ Brouillard',
+        51: '🌦️ Bruine légère',
+        61: '🌧️ Pluie légère',
+        71: '❄️ Neige légère',
+        95: '⛈️ Orage'
+      };
+      return descs[code] || '🌡️ Variable';
+    }
+
+    // News IA
+    async function loadAINews() {
+      try {
+        const res = await fetch('https://hn.algolia.com/api/v1/search_by_date?query=AI%20OR%20GPT%20OR%20LLM&tags=story&hitsPerPage=5');
+        const data = await res.json();
+        
+        const newsHTML = data.hits.map(item => `
+          <div class="news-item">
+            <strong>${item.title}</strong>
+            <small>Par ${item.author} • ${item.num_comments || 0} commentaires • ${item.points || 0} points</small>
+          </div>
+        `).join('');
+        
+        document.getElementById('ai-news').innerHTML = newsHTML || '<p>Aucune actualité disponible</p>';
+      } catch(e) {
+        document.getElementById('ai-news').innerHTML = '<p>Erreur de chargement des actualités</p>';
+      }
+    }
+
+    // Analyse
+    function showAnalysis() {
+      const analysis = document.getElementById('analysis');
+      analysis.classList.add('show');
+      document.getElementById('analysisDate').textContent = new Date().toLocaleString('fr-FR');
+    }
+
+    // Chargement initial
+    loadWeather();
+    loadAINews();
+    
+    // Rafraîchissement automatique
+    setInterval(loadWeather, 5 * 60 * 1000); // 5 minutes
+    setInterval(loadAINews, 10 * 60 * 1000); // 10 minutes
+  </script>
+</body>
+</html>
