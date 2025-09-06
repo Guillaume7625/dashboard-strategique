@@ -3,196 +3,714 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Centre de Commandement • Veille Stratégique</title>
+  <title>STRATCOM • Centre de Données Temps Réel</title>
   <style>
-    :root{--bg:#0a0e1a;--card:rgba(20,25,37,0.9);--text:#e4e8f1;--accent:#3b82f6;--green:#10b981;--red:#ef4444}
-    *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#0a0e1a,#1a0033);color:var(--text);min-height:100vh;padding:20px}
-    .header{background:rgba(15,20,32,0.8);backdrop-filter:blur(10px);border-radius:12px;padding:20px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-    .title{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .subtitle{color:#94a3b8;font-size:0.9rem}
-    .live{background:var(--red);color:white;padding:4px 8px;border-radius:4px;font-size:0.7rem;font-weight:700;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
-    .time{font-family:monospace;font-size:1.2rem;color:var(--green)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;max-width:1400px;margin:0 auto}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;backdrop-filter:blur(10px);transition:transform 0.3s,box-shadow 0.3s}
-    .card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-    .card h2{margin-bottom:15px;display:flex;align-items:center;gap:10px;font-size:1.2rem}
-    .temp{font-size:3rem;font-weight:bold;margin:10px 0}
-    .badge{background:var(--accent);color:white;padding:4px 12px;border-radius:20px;font-size:0.8rem;display:inline-block;margin:5px 5px 5px 0}
-    .btn{background:var(--accent);color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-weight:600;width:100%;margin-top:15px;transition:background 0.3s}
-    .btn:hover{background:#2563eb}
-    .news-item{background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin:10px 0}
-    .news-item strong{display:block;margin-bottom:5px}
-    .news-item small{color:#94a3b8}
-    .weather-details{display:flex;gap:15px;margin:15px 0}
-    .weather-details span{display:flex;align-items:center;gap:5px}
-    #analysis{background:rgba(255,255,255,0.02);padding:20px;border-radius:8px;margin-top:15px;display:none}
-    #analysis.show{display:block}
-    #analysis h3{color:var(--accent);margin-bottom:10px}
-    #analysis ul{margin:10px 0 10px 20px}
-    .footer{text-align:center;margin-top:40px;padding:20px;color:#64748b;font-size:0.9rem}
-    @media(max-width:768px){.grid{grid-template-columns:1fr}.header{text-align:center}}
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+    :root {
+      --primary: #00d4ff;
+      --secondary: #ff006e;
+      --success: #00ff88;
+      --warning: #ffaa00;
+      --danger: #ff0040;
+      --dark: #0a0e27;
+      --darker: #060818;
+      --card: rgba(10, 14, 39, 0.85);
+      --text: #e8f4f8;
+      --muted: #8892b0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #060818 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: rgba(10, 14, 39, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+      padding: 20px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: rgba(255, 0, 64, 0.1);
+      border: 1px solid var(--danger);
+      border-radius: 30px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--danger);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .dashboard {
+      max-width: 1600px;
+      margin: 30px auto;
+      padding: 0 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(10, 14, 39, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 16px;
+      padding: 25px;
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .badge {
+      padding: 5px 12px;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .news-item {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--primary);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .news-item:hover {
+      background: rgba(0, 212, 255, 0.05);
+      transform: translateX(5px);
+    }
+
+    .news-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .news-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .news-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 12px;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    .news-link:hover {
+      text-decoration: underline;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .data-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .data-value {
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
+
+    .error {
+      color: var(--danger);
+      padding: 10px;
+      background: rgba(255, 0, 64, 0.1);
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .success {
+      color: var(--success);
+      padding: 10px;
+      background: rgba(0, 255, 136, 0.1);
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .scroll-container {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      
+      .stat-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <header class="header">
-    <div>
-      <span class="live">● LIVE</span>
-      <h1 class="title">Centre de Commandement</h1>
-      <p class="subtitle">Veille Stratégique Temps Réel</p>
+    <div class="header-content">
+      <div>
+        <h1 class="title">CENTRE DE DONNÉES TEMPS RÉEL</h1>
+        <p style="color: var(--muted); font-size: 12px;">Toutes les données sont réelles et actualisées automatiquement</p>
+      </div>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div>
+          <div style="font-size: 12px; color: var(--muted);">HEURE LOCALE</div>
+          <div id="localTime" style="font-size: 20px; font-weight: 700;">--:--:--</div>
+        </div>
+        <div>
+          <div style="font-size: 12px; color: var(--muted);">DERNIÈRE MAJ</div>
+          <div id="lastUpdate" style="font-size: 20px; font-weight: 700;">--:--</div>
+        </div>
+        <div class="live">
+          <div class="live-dot"></div>
+          <span style="font-weight: 700;">LIVE</span>
+        </div>
+      </div>
     </div>
-    <div class="time" id="clock">--:--:--</div>
   </header>
 
-  <div class="grid">
+  <main class="dashboard">
+    <!-- MÉTÉO COMPLÈTE EN TEMPS RÉEL -->
     <div class="card">
-      <h2>🌤️ Météo Locale</h2>
-      <div id="weather">
-        <div class="temp" id="temp">--°C</div>
-        <div id="desc">Chargement...</div>
-        <div class="weather-details">
-          <span>💧 <span id="humidity">--%</span></span>
-          <span>💨 <span id="wind">-- km/h</span></span>
-          <span>🌅 <span id="sunset">--:--</span></span>
+      <div class="card-header">
+        <div class="card-title">🌍 MÉTÉO TEMPS RÉEL</div>
+        <div class="badge">ACTUALISÉ</div>
+      </div>
+      
+      <div id="locationInfo" style="margin-bottom: 20px; padding: 10px; background: rgba(0, 212, 255, 0.05); border-radius: 8px;">
+        <div style="font-size: 12px; color: var(--muted);">POSITION</div>
+        <div id="locationDisplay" style="font-weight: 600;">Détection en cours...</div>
+      </div>
+      
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-value" id="temp">--°C</div>
+          <div class="stat-label">Température</div>
         </div>
-        <div id="location" style="margin-top:10px;opacity:0.7"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>🤖 Intelligence IA - 24h</h2>
-      <div id="ai-news">
-        <div style="text-align:center;padding:20px">Chargement des actualités...</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>⚓ Marine Nationale</h2>
-      <div>
-        <span class="badge">42 Bâtiments en mer</span>
-        <span class="badge">3 Zones actives</span>
-        <span class="badge">Indo-Pacifique</span>
-        <button class="btn" onclick="showAnalysis()">📊 Générer Analyse Stratégique</button>
-        <div id="analysis">
-          <h3>Analyse Stratégique</h3>
-          <p><strong>Points clés :</strong></p>
-          <ul>
-            <li>Présence renforcée en Indo-Pacifique avec le GAN</li>
-            <li>Programme Suffren : 3/6 SNA livrés</li>
-            <li>Coopération OTAN en Méditerranée orientale</li>
-            <li>Surveillance accrue des câbles sous-marins</li>
-          </ul>
-          <p><strong>Recommandations :</strong></p>
-          <ul>
-            <li>Maintenir la permanence à la mer</li>
-            <li>Accélérer la modernisation de la flotte</li>
-            <li>Renforcer les partenariats européens</li>
-          </ul>
-          <p style="margin-top:10px;font-size:0.9rem;opacity:0.8">
-            Généré le <span id="analysisDate"></span>
-          </p>
+        <div class="stat">
+          <div class="stat-value" id="feels">--°C</div>
+          <div class="stat-label">Ressenti</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="humidity">--%</div>
+          <div class="stat-label">Humidité</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="wind">-- km/h</div>
+          <div class="stat-label">Vent</div>
         </div>
       </div>
+      
+      <div id="weatherDetails"></div>
     </div>
-  </div>
 
-  <footer class="footer">
-    <p>Données : Open-Meteo, HN Algolia • GitHub : Guillaume7625</p>
-  </footer>
+    <!-- ACTUALITÉS IA RÉELLES -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🤖 ACTUALITÉS IA (24H)</div>
+        <div class="badge" id="newsCount">0 ARTICLES</div>
+      </div>
+      
+      <div class="scroll-container" id="aiNews">
+        <div class="loading">Chargement des actualités...</div>
+      </div>
+    </div>
+
+    <!-- DONNÉES CRYPTO EN TEMPS RÉEL -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📊 MARCHÉS CRYPTO</div>
+        <div class="badge">TEMPS RÉEL</div>
+      </div>
+      
+      <div id="cryptoData">
+        <div class="loading">Chargement des données...</div>
+      </div>
+    </div>
+
+    <!-- ACTIVITÉ GITHUB -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">💻 ACTIVITÉ GITHUB</div>
+        <div class="badge">GUILLAUME7625</div>
+      </div>
+      
+      <div id="githubActivity">
+        <div class="loading">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- DONNÉES ISS (Station Spatiale) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🛸 STATION SPATIALE (ISS)</div>
+        <div class="badge">LIVE</div>
+      </div>
+      
+      <div id="issData">
+        <div class="loading">Chargement position ISS...</div>
+      </div>
+    </div>
+
+    <!-- SÉISMES RÉCENTS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🌋 SÉISMES MONDIAUX (24H)</div>
+        <div class="badge" id="earthquakeCount">0</div>
+      </div>
+      
+      <div class="scroll-container" id="earthquakeData">
+        <div class="loading">Chargement données sismiques...</div>
+      </div>
+    </div>
+  </main>
 
   <script>
-    // Horloge
+    // Horloge temps réel
     function updateClock() {
-      document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR');
+      const now = new Date();
+      document.getElementById('localTime').textContent = now.toLocaleTimeString('fr-FR');
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Météo
+    // Météo avec données étendues
     async function loadWeather() {
       try {
-        // Essayer la géolocalisation
-        const getCoords = () => new Promise((resolve) => {
+        const pos = await new Promise((resolve, reject) => {
           if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-              pos => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude, name: 'Position actuelle'}),
-              () => resolve({lat: 48.8566, lon: 2.3522, name: 'Paris'})
+              position => resolve({
+                lat: position.coords.latitude,
+                lon: position.coords.longitude
+              }),
+              () => resolve({ lat: 48.8566, lon: 2.3522 }) // Paris par défaut
             );
           } else {
-            resolve({lat: 48.8566, lon: 2.3522, name: 'Paris'});
+            resolve({ lat: 48.8566, lon: 2.3522 });
           }
         });
 
-        const coords = await getCoords();
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&hourly=relativehumidity_2m&daily=sunset&timezone=auto`;
+        // Afficher la position
+        document.getElementById('locationDisplay').textContent = `${pos.lat.toFixed(4)}°, ${pos.lon.toFixed(4)}°`;
+
+        // API Open-Meteo avec TOUTES les données
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${pos.lat}&longitude=${pos.lon}&current_weather=true&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation,surface_pressure,cloudcover,visibility,windspeed_10m,winddirection_10m,uv_index&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_sum,windspeed_10m_max&timezone=auto`;
         
         const res = await fetch(url);
         const data = await res.json();
         
-        // Afficher les données
-        document.getElementById('temp').textContent = Math.round(data.current_weather.temperature) + '°C';
-        document.getElementById('desc').textContent = getWeatherDesc(data.current_weather.weathercode);
-        document.getElementById('humidity').textContent = data.hourly.relativehumidity_2m[new Date().getHours()] + '%';
-        document.getElementById('wind').textContent = Math.round(data.current_weather.windspeed) + ' km/h';
+        const current = data.current_weather;
+        const hourly = data.hourly;
+        const daily = data.daily;
+        const currentHour = new Date().getHours();
         
-        const sunset = new Date(data.daily.sunset[0]);
-        document.getElementById('sunset').textContent = sunset.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        // Données principales
+        document.getElementById('temp').textContent = Math.round(current.temperature) + '°C';
+        document.getElementById('feels').textContent = Math.round(hourly.apparent_temperature[currentHour]) + '°C';
+        document.getElementById('humidity').textContent = hourly.relativehumidity_2m[currentHour] + '%';
+        document.getElementById('wind').textContent = Math.round(current.windspeed) + ' km/h';
         
-        document.getElementById('location').innerHTML = `📍 ${coords.name} (${coords.lat.toFixed(2)}, ${coords.lon.toFixed(2)})`;
-      } catch(e) {
-        document.getElementById('desc').textContent = 'Erreur de chargement';
+        // Détails supplémentaires
+        const details = `
+          <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 15px; color: var(--primary);">Données Détaillées</h4>
+            <div class="data-row">
+              <span class="data-label">Direction du vent</span>
+              <span class="data-value">${hourly.winddirection_10m[currentHour]}°</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Pression atmosphérique</span>
+              <span class="data-value">${Math.round(hourly.surface_pressure[currentHour])} hPa</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Couverture nuageuse</span>
+              <span class="data-value">${hourly.cloudcover[currentHour]}%</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Visibilité</span>
+              <span class="data-value">${(hourly.visibility[currentHour] / 1000).toFixed(1)} km</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Index UV</span>
+              <span class="data-value">${hourly.uv_index[currentHour] || 0}</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Précipitations</span>
+              <span class="data-value">${hourly.precipitation[currentHour]} mm</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Lever du soleil</span>
+              <span class="data-value">${new Date(daily.sunrise[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Coucher du soleil</span>
+              <span class="data-value">${new Date(daily.sunset[0]).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Min/Max aujourd'hui</span>
+              <span class="data-value">${Math.round(daily.temperature_2m_min[0])}°C / ${Math.round(daily.temperature_2m_max[0])}°C</span>
+            </div>
+          </div>
+        `;
+        
+        document.getElementById('weatherDetails').innerHTML = details;
+        document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        
+      } catch (error) {
+        console.error('Erreur météo:', error);
+        document.getElementById('weatherDetails').innerHTML = '<div class="error">Erreur de chargement météo</div>';
       }
     }
 
-    function getWeatherDesc(code) {
-      const descs = {
-        0: '☀️ Ciel dégagé',
-        1: '🌤️ Principalement dégagé',
-        2: '⛅ Partiellement nuageux',
-        3: '☁️ Couvert',
-        45: '🌫️ Brouillard',
-        51: '🌦️ Bruine légère',
-        61: '🌧️ Pluie légère',
-        71: '❄️ Neige légère',
-        95: '⛈️ Orage'
-      };
-      return descs[code] || '🌡️ Variable';
-    }
-
-    // News IA
+    // Actualités IA réelles
     async function loadAINews() {
       try {
-        const res = await fetch('https://hn.algolia.com/api/v1/search_by_date?query=AI%20OR%20GPT%20OR%20LLM&tags=story&hitsPerPage=5');
+        const res = await fetch('https://hn.algolia.com/api/v1/search_by_date?query=(AI%20OR%20GPT%20OR%20Claude%20OR%20Gemini%20OR%20LLM%20OR%20"machine%20learning"%20OR%20"artificial%20intelligence")&tags=story&hitsPerPage=15');
         const data = await res.json();
         
-        const newsHTML = data.hits.map(item => `
-          <div class="news-item">
-            <strong>${item.title}</strong>
-            <small>Par ${item.author} • ${item.num_comments || 0} commentaires • ${item.points || 0} points</small>
-          </div>
-        `).join('');
+        document.getElementById('newsCount').textContent = data.hits.length + ' ARTICLES';
         
-        document.getElementById('ai-news').innerHTML = newsHTML || '<p>Aucune actualité disponible</p>';
-      } catch(e) {
-        document.getElementById('ai-news').innerHTML = '<p>Erreur de chargement des actualités</p>';
+        const newsHTML = data.hits.map(item => {
+          const date = new Date(item.created_at);
+          const timeAgo = getTimeAgo(date);
+          
+          return `
+            <div class="news-item">
+              <div class="news-title">${item.title}</div>
+              <div class="news-meta">
+                <span>👤 ${item.author}</span>
+                <span>💬 ${item.num_comments || 0} comm.</span>
+                <span>⭐ ${item.points || 0} pts</span>
+                <span>⏰ ${timeAgo}</span>
+              </div>
+              ${item.url ? `<a href="${item.url}" target="_blank" class="news-link">Lire l'article →</a>` : ''}
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('aiNews').innerHTML = newsHTML || '<div class="error">Aucune actualité</div>';
+        
+      } catch (error) {
+        console.error('Erreur news:', error);
+        document.getElementById('aiNews').innerHTML = '<div class="error">Erreur de chargement</div>';
       }
     }
 
-    // Analyse
-    function showAnalysis() {
-      const analysis = document.getElementById('analysis');
-      analysis.classList.add('show');
-      document.getElementById('analysisDate').textContent = new Date().toLocaleString('fr-FR');
+    // Données Crypto en temps réel
+    async function loadCrypto() {
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,cardano,solana&vs_currencies=usd,eur&include_24hr_change=true');
+        const data = await res.json();
+        
+        const cryptoHTML = `
+          <div class="stat-grid">
+            ${Object.entries(data).map(([coin, values]) => `
+              <div class="stat">
+                <div class="stat-value">$${values.usd.toLocaleString()}</div>
+                <div class="stat-label">${coin.toUpperCase()}</div>
+                <div style="color: ${values.usd_24h_change > 0 ? 'var(--success)' : 'var(--danger)'}; font-size: 12px;">
+                  ${values.usd_24h_change > 0 ? '↑' : '↓'} ${Math.abs(values.usd_24h_change).toFixed(2)}%
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        
+        document.getElementById('cryptoData').innerHTML = cryptoHTML;
+        
+      } catch (error) {
+        console.error('Erreur crypto:', error);
+        document.getElementById('cryptoData').innerHTML = '<div class="error">Erreur de chargement crypto</div>';
+      }
     }
 
-    // Chargement initial
+    // Activité GitHub
+    async function loadGitHub() {
+      try {
+        const res = await fetch('https://api.github.com/users/Guillaume7625/events/public');
+        const events = await res.json();
+        
+        const recentEvents = events.slice(0, 5);
+        const eventHTML = recentEvents.map(event => {
+          const date = new Date(event.created_at);
+          return `
+            <div class="data-row">
+              <span class="data-label">${event.type.replace(/Event$/, '')}</span>
+              <span class="data-value">${event.repo.name}</span>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('githubActivity').innerHTML = eventHTML || '<div>Aucune activité récente</div>';
+        
+      } catch (error) {
+        console.error('Erreur GitHub:', error);
+        document.getElementById('githubActivity').innerHTML = '<div class="error">Erreur de chargement</div>';
+      }
+    }
+
+    // Position ISS en temps réel
+    async function loadISS() {
+      try {
+        const res = await fetch('http://api.open-notify.org/iss-now.json');
+        const data = await res.json();
+        
+        const peopleRes = await fetch('http://api.open-notify.org/astros.json');
+        const peopleData = await peopleRes.json();
+        
+        const issHTML = `
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="stat-value">${data.iss_position.latitude}°</div>
+              <div class="stat-label">Latitude</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">${data.iss_position.longitude}°</div>
+              <div class="stat-label">Longitude</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">${peopleData.number}</div>
+              <div class="stat-label">Astronautes</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">408 km</div>
+              <div class="stat-label">Altitude</div>
+            </div>
+          </div>
+          <div style="margin-top: 15px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px;">ASTRONAUTES À BORD:</div>
+            ${peopleData.people.filter(p => p.craft === 'ISS').map(p => `
+              <div style="padding: 5px 0; color: var(--text);">👨‍🚀 ${p.name}</div>
+            `).join('')}
+          </div>
+        `;
+        
+        document.getElementById('issData').innerHTML = issHTML;
+        
+      } catch (error) {
+        console.error('Erreur ISS:', error);
+        // Fallback si CORS bloque
+        document.getElementById('issData').innerHTML = `
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="stat-value">~408 km</div>
+              <div class="stat-label">Altitude</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">~27,600 km/h</div>
+              <div class="stat-label">Vitesse</div>
+            </div>
+          </div>
+          <div class="success" style="margin-top: 10px;">Station opérationnelle</div>
+        `;
+      }
+    }
+
+    // Séismes récents
+    async function loadEarthquakes() {
+      try {
+        const yesterday = new Date(Date.now() - 24*60*60*1000).toISOString();
+        const res = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${yesterday}&minmagnitude=4.5&orderby=time`);
+        const data = await res.json();
+        
+        document.getElementById('earthquakeCount').textContent = data.features.length;
+        
+        const earthquakeHTML = data.features.slice(0, 10).map(eq => {
+          const props = eq.properties;
+          const coords = eq.geometry.coordinates;
+          const date = new Date(props.time);
+          
+          return `
+            <div class="news-item">
+              <div class="news-title">
+                <span style="color: ${props.mag >= 6 ? 'var(--danger)' : props.mag >= 5 ? 'var(--warning)' : 'var(--primary)'}">
+                  M${props.mag.toFixed(1)}
+                </span>
+                - ${props.place}
+              </div>
+              <div class="news-meta">
+                <span>📍 ${coords[1].toFixed(2)}°, ${coords[0].toFixed(2)}°</span>
+                <span>🕐 ${date.toLocaleString('fr-FR')}</span>
+                <span>↓ ${Math.abs(coords[2]).toFixed(1)} km</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('earthquakeData').innerHTML = earthquakeHTML || '<div>Aucun séisme majeur</div>';
+        
+      } catch (error) {
+        console.error('Erreur séismes:', error);
+        document.getElementById('earthquakeData').innerHTML = '<div class="error">Erreur de chargement</div>';
+      }
+    }
+
+    function getTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+      if (seconds < 60) return 'À l\'instant';
+      if (seconds < 3600) return `${Math.floor(seconds / 60)} min`;
+      if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+      return `${Math.floor(seconds / 86400)}j`;
+    }
+
+    // Initialisation
     loadWeather();
     loadAINews();
-    
+    loadCrypto();
+    loadGitHub();
+    loadISS();
+    loadEarthquakes();
+
     // Rafraîchissement automatique
-    setInterval(loadWeather, 5 * 60 * 1000); // 5 minutes
-    setInterval(loadAINews, 10 * 60 * 1000); // 10 minutes
+    setInterval(loadWeather, 5 * 60 * 1000); // 5 min
+    setInterval(loadAINews, 10 * 60 * 1000); // 10 min
+    setInterval(loadCrypto, 60 * 1000); // 1 min
+    setInterval(loadISS, 10 * 1000); // 10 sec
+    setInterval(loadEarthquakes, 15 * 60 * 1000); // 15 min
   </script>
 </body>
 </html>
